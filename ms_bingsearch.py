@@ -39,7 +39,7 @@ class MicrosoftBingSearch(object):
 
 
     def get_img_search_response(self, query='', count=1, offset=0, safeSearch=None):
-        """Make a request to the image sarch API and return a response
+        """Make a request to the image search API and return a response
 
         :query: text query to be passed to the requests module
         :count: number of responses to return (default: 1)
@@ -75,7 +75,14 @@ class MicrosoftBingSearch(object):
         :returns: image url
 
         """
-        r = self.get_img_search_response(query)
+        if not query:
+            return ""
+        if query == self.current_query:
+            self.current_offset += 1
+        else:
+            self.current_offset = 0
+            self.current_query = query
+        r = self.get_img_search_response(query, offset=self.current_offset)
         if r['value']:
             bing_url = r['value'][0]['contentUrl']
             # use requests to resolve redirect
