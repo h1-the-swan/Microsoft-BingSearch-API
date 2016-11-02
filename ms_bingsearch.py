@@ -94,3 +94,32 @@ class MicrosoftBingSearch(object):
         else:
             # empty result
             return ""
+
+    def get_multiple_img_url(self, query, count=10):
+        """Given a query, get the first image url returned by Bing
+
+        :query: query string
+        :count: number of results (default: 10)
+        :returns: image url
+
+        """
+        if not query:
+            return []
+        # if query == self.current_query:
+        #     self.current_offset += 1
+        # else:
+        #     self.current_offset = 0
+        #     self.current_query = query
+        r = self.get_img_search_response(query, count=count)
+        if r['value']:
+            urls = []
+            for item in r['value']:
+                bing_url = item['contentUrl']
+                # use requests to resolve redirect
+                imgr = requests.get(bing_url)
+                if imgr.status_code == 200:
+                    urls.append(imgr.url)
+            return urls
+        else:
+            # empty result
+            return []
